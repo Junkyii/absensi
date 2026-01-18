@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Absensi Mahasiswa</title>
+
+    <style>
+        :root {
+            --primary-color: #00897b;
+            --success-bg: #e0f2f1;
+            --success-border: #00897b;
+            --failure-bg: #ffebee;
+            --failure-border: #e53935;
+        }
+
+        body {
+            font-family: Poppins, sans-serif;
+            background: #eceff1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 35px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 25px rgba(0,0,0,.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 20px;
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        #ulangButton {
+            display: none;
+            margin-top: 15px;
+            background: #43a047;
+        }
+
+        #hasil {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            white-space: pre-line;
+        }
+
+        .success {
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-border);
+        }
+
+        .failure {
+            background: var(--failure-bg);
+            border: 1px solid var(--failure-border);
+            color: var(--failure-border);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ABSENSI MAHASISWA</h1>
+
+    <form id="formAbsensi">
+        <label>Nama</label>
+        <input type="text" id="nama" placeholder="Nama lengkap">
+
+        <label>NIM</label>
+        <input type="text" id="nim" placeholder="8 digit angka" maxlength="8">
+
+        <label>Jurusan</label>
+        <input type="text" id="jurusan" placeholder="Jurusan">
+
+        <label>Status Kehadiran</label>
+        <select id="status">
+            <option value="">-- Pilih Status --</option>
+            <option value="Hadir">Hadir</option>
+            <option value="Izin">Izin</option>
+            <option value="Sakit">Sakit</option>
+        </select>
+
+        <button type="submit">Simpan Absensi</button>
+    </form>
+
+    <div id="hasil"></div>
+    <button id="ulangButton">Input Lagi</button>
+</div>
+
+<script>
+    function validasi(nama, nim, jurusan, status) {
+        if (nama === "" || jurusan === "" || status === "") {
+            return false;
+        }
+        if (nim.length !== 8 || isNaN(nim)) {
+            return false;
+        }
+        return true;
+    }
+
+    function waktuWIB() {
+    const now = new Date();
+
+    let jam = now.getHours();
+    const menit = String(now.getMinutes()).padStart(2, "0");
+    const ampm = jam >= 12 ? "PM" : "AM";
+
+    jam = jam % 12;
+    jam = jam === 0 ? 12 : jam;
+
+    return `${jam}.${menit} ${ampm} WIB`;
+}
+    function simpanAbsensi(data) {
+        console.log("=== DATA ABSENSI ===");
+        console.log(data);
+    }
+
+    const form = document.getElementById("formAbsensi");
+    const hasil = document.getElementById("hasil");
+    const ulang = document.getElementById("ulangButton");
+
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const nama = document.getElementById("nama").value.trim();
+        const nim = document.getElementById("nim").value.trim();
+        const jurusan = document.getElementById("jurusan").value.trim();
+        const status = document.getElementById("status").value;
+
+        hasil.className = "";
+
+        if (!validasi(nama, nim, jurusan, status)) {
+            hasil.classList.add("failure");
+            hasil.innerHTML = "❌ Absensi GAGAL\nPastikan semua data diisi & NIM 8 digit angka.";
+            return;
+        }
+
+        const waktu = waktuWIB();
+
+        simpanAbsensi({ nama, nim, jurusan, status, waktu });
+
+        hasil.classList.add("success");
+        hasil.innerHTML =
+`✅ ABSENSI BERHASIL
+Nama    : ${nama}
+NIM     : ${nim}
+Jurusan : ${jurusan}
+Status  : ${status}
+Waktu   : ${waktu}`;
+
+        form.style.display = "none";
+        ulang.style.display = "block";
+    });
+
+    ulang.addEventListener("click", function() {
+        form.reset();
+        hasil.innerHTML = "";
+        hasil.className = "";
+        form.style.display = "block";
+        ulang.style.display = "none";
+    });
+</script>
+
+</body>
+</html>
