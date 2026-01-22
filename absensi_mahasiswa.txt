@@ -2,8 +2,8 @@ HASIL ABSENSI MAHASISWA
 ================================
 
 Mahasiswa ke-1
-Nama    : Bluu
-NIM     : 2012504
-Jurusan : STEIK
+Nama    : Raffasha Ariadiza
+NIM     : 20125049
+Jurusan : Informatika
 Status  : Hadir
 ------------------------------

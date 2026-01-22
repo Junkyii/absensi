@@ -30,10 +30,10 @@ public class absensi {
         try {
             FileWriter writer = new FileWriter("absensi_mahasiswa.txt");
             BufferedWriter buffer = new BufferedWriter(writer);
-            
+
             buffer.write("HASIL ABSENSI MAHASISWA\n");
             buffer.write("================================\n\n");
-            
+
             for (int i = 0; i < jumlah; i++) {
                 buffer.write("Mahasiswa ke-" + (i + 1) + "\n");
                 buffer.write("Nama    : " + nama[i] + "\n");
@@ -42,7 +42,7 @@ public class absensi {
                 buffer.write("Status  : " + status[i] + "\n");
                 buffer.write("------------------------------\n");
             }
-            
+
             buffer.close();
             System.out.println("\n✓ Data berhasil disimpan ke file 'absensi_mahasiswa.txt'");
         } catch (IOException e) {
@@ -55,13 +55,13 @@ public class absensi {
         try {
             FileReader reader = new FileReader("absensi_mahasiswa.txt");
             BufferedReader buffer = new BufferedReader(reader);
-            
+
             String line;
             System.out.println("\n=== DATA DARI FILE ===");
             while ((line = buffer.readLine()) != null) {
                 System.out.println(line);
             }
-            
+
             buffer.close();
         } catch (FileNotFoundException e) {
             System.out.println("\n✗ File tidak ditemukan. Belum ada data yang tersimpan.");
@@ -74,13 +74,13 @@ public class absensi {
     static int inputAngkaValid(Scanner input, String prompt, int min, int max) {
         int angka = -1;
         boolean valid = false;
-        
+
         while (!valid) {
             try {
                 System.out.print(prompt);
                 angka = input.nextInt();
-                input.nextLine(); 
-                
+                input.nextLine();
+
                 if (angka >= min && angka <= max) {
                     valid = true;
                 } else {
@@ -88,10 +88,10 @@ public class absensi {
                 }
             } catch (Exception e) {
                 System.out.println("✗ Input harus berupa angka!");
-                input.nextLine(); 
+                input.nextLine();
             }
         }
-        
+
         return angka;
     }
 
@@ -99,44 +99,23 @@ public class absensi {
     static String inputStringValid(Scanner input, String prompt) {
         String str = "";
         boolean valid = false;
-        
+
         while (!valid) {
             System.out.print(prompt);
             str = input.nextLine().trim();
-            
+
             if (!str.isEmpty()) {
                 valid = true;
             } else {
                 System.out.println("✗ Input tidak boleh kosong!");
             }
         }
-        
+
         return str;
     }
 
-    public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-
-        tampilJudul();
-
-        // ===== MENU UTAMA =====
-        System.out.println("\nMENU:");
-        System.out.println("1. Input Data Absensi Baru");
-        System.out.println("2. Lihat Data dari File");
-        System.out.println("3. Keluar");
-        
-        int menu = inputAngkaValid(input, "Pilih menu (1-3): ", 1, 3);
-
-        if (menu == 2) {
-            bacaDariFile();
-            input.close();
-            return;
-        } else if (menu == 3) {
-            System.out.println("Terima kasih!");
-            input.close();
-            return;
-        }
-
+    // ===== PROSEDUR INPUT DATA =====
+    static void tambahDataAbsensi(Scanner input) {
         // ===== INPUT JUMLAH MAHASISWA =====
         int jumlah = inputAngkaValid(input, "\nMasukkan jumlah mahasiswa: ", 1, 100);
 
@@ -159,7 +138,7 @@ public class absensi {
             System.out.println("2. Izin");
             System.out.println("3. Sakit");
             System.out.println("4. Alfa");
-            
+
             int pilih = inputAngkaValid(input, "Pilih (1-4): ", 1, 4);
             status[i] = cekKehadiran(pilih);
         }
@@ -168,7 +147,7 @@ public class absensi {
         System.out.println("\n================================");
         System.out.println("   HASIL ABSENSI MAHASISWA");
         System.out.println("================================");
-        
+
         for (int i = 0; i < jumlah; i++) {
             System.out.println("\nMahasiswa ke-" + (i + 1));
             System.out.println("------------------------------");
@@ -178,12 +157,51 @@ public class absensi {
             System.out.println("Status  : " + status[i]);
         }
 
-        // ===== SIMPAN KE FILE =====
-        System.out.print("\nSimpan data ke file? (y/n): ");
-        String simpan = input.nextLine().toLowerCase();
-        
-        if (simpan.equals("y") || simpan.equals("yes")) {
-            simpanKeFile(nama, nim, jurusan, status, jumlah);
+        // ===== SIMPAN KE FILE DENGAN VALIDASI =====
+        boolean inputValid = false;
+        while (!inputValid) {
+            System.out.print("\nSimpan data ke file? (y/n): ");
+            String simpan = input.nextLine().toLowerCase().trim();
+
+            if (simpan.equals("y") || simpan.equals("yes")) {
+                simpanKeFile(nama, nim, jurusan, status, jumlah);
+                inputValid = true;
+            } else if (simpan.equals("n") || simpan.equals("no")) {
+                System.out.println("Data tidak disimpan.");
+                inputValid = true;
+            } else {
+                System.out.println("✗ Input tidak valid! Masukkan 'y' atau 'n'.");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        boolean running = true;
+
+        while (running) {
+            tampilJudul();
+
+            // ===== MENU UTAMA =====
+            System.out.println("\nMENU:");
+            System.out.println("1. Input Data Absensi Baru");
+            System.out.println("2. Lihat Data dari File");
+            System.out.println("3. Keluar");
+
+            int menu = inputAngkaValid(input, "Pilih menu (1-3): ", 1, 3);
+
+            if (menu == 1) {
+                tambahDataAbsensi(input);
+                System.out.println("\nTekan Enter untuk kembali ke menu utama...");
+                input.nextLine();
+            } else if (menu == 2) {
+                bacaDariFile();
+                System.out.println("\nTekan Enter untuk kembali ke menu utama...");
+                input.nextLine();
+            } else if (menu == 3) {
+                System.out.println("Terima kasih! Program selesai.");
+                running = false;
+            }
         }
 
         input.close();
